@@ -215,6 +215,11 @@ async def _main(args):
 
         # add the script from above
         cli.add_command('mash', call_mash_button)
+        
+        # Create Custom Command:
+        #async def digwalls(*args):
+        #    _set_stick(l, up, 1)
+        #    call_mash_button(a)
 
         # Create amiibo command
         async def amiibo(*args):
