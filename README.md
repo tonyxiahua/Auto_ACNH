@@ -1,3 +1,9 @@
+# 动森自动化操控器
+
+现在已经可以实现的功能， 商店自动购物，背包自动放置九件物品。
+更多的功能实现中
+
+
 # joycontrol
 Emulate Nintendo Switch Controllers over Bluetooth.
 

@@ -17,6 +17,7 @@ from joycontrol.server import create_hid_server
 
 logger = logging.getLogger(__name__)
 
+
 async def buy(controller_state: ControllerState):
     if controller_state.get_controller() != Controller.PRO_CONTROLLER:
         raise ValueError('This script only works with the Pro Controller!')
@@ -42,6 +43,28 @@ async def buy(controller_state: ControllerState):
         await button_push(controller_state, 'a')
         await button_push(controller_state, 'b')
         await asyncio.sleep(0.4)
+    await user_input
+
+
+
+
+
+async def drop(controller_state: ControllerState):
+    if controller_state.get_controller() != Controller.PRO_CONTROLLER:
+        raise ValueError('This script only works with the Pro Controller!')
+    await controller_state.connect()
+    await ainput(prompt='动森购买器  and press <enter> to continue.')
+    user_input = asyncio.ensure_future(
+        ainput(prompt='Buying gifts... Press <enter> to stop.')
+    )
+    while not user_input.done():
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(0.3)
+        await button_push(controller_state, 'down')
+        await button_push(controller_state, 'a')
+        await asyncio.sleep(0.8)
+        await button_push(controller_state, 'right')
+        await asyncio.sleep(0.3)
     await user_input
 
     
@@ -187,7 +210,14 @@ async def _main(args):
 
         # Create command line interface and add some extra commands
         cli = ControllerCLI(controller_state)
-
+        '''
+        Custom Commands
+        '''
+        async def _run_drop(): 
+            await drop(controller_state)
+        cli.add_command('drop',_run_drop)
+        
+        
         async def _run_buy(): 
             await buy(controller_state)
         cli.add_command('buy',_run_buy)
