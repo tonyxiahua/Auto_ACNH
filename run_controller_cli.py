@@ -17,39 +17,34 @@ from joycontrol.server import create_hid_server
 
 logger = logging.getLogger(__name__)
 
-"""Emulates Switch controller. Opens joycontrol.command_line_interface to send button commands and more.
+async def buy(controller_state: ControllerState):
+    if controller_state.get_controller() != Controller.PRO_CONTROLLER:
+        raise ValueError('This script only works with the Pro Controller!')
+    await controller_state.connect()
+    await ainput(prompt='动森购买器 Make sure the  Animal crossing in shop and press <enter> to continue.')
+    user_input = asyncio.ensure_future(
+        ainput(prompt='Buying gifts... Press <enter> to stop.')
+    )
+    while not user_input.done():
+        await button_push(controller_state, 'a')
+        await button_push(controller_state, 'b')
+        await asyncio.sleep(0.4)
+        await button_push(controller_state, 'a')
+        await button_push(controller_state, 'b')
+        await asyncio.sleep(0.4)
+        await button_push(controller_state, 'down')
+        await button_push(controller_state, 'a')
+        await button_push(controller_state, 'b')
+        await asyncio.sleep(1.5)
+        await button_push(controller_state, 'a')
+        await button_push(controller_state, 'b')
+        await asyncio.sleep(0.4)
+        await button_push(controller_state, 'a')
+        await button_push(controller_state, 'b')
+        await asyncio.sleep(0.4)
+    await user_input
 
-While running the cli, call "help" for an explanation of available commands.
-
-Usage:
-    run_controller_cli.py <controller> [--device_id | -d  <bluetooth_adapter_id>]
-                                       [--spi_flash <spi_flash_memory_file>]
-                                       [--reconnect_bt_addr | -r <console_bluetooth_address>]
-                                       [--log | -l <communication_log_file>]
-    run_controller_cli.py -h | --help
-
-Arguments:
-    controller      Choose which controller to emulate. Either "JOYCON_R", "JOYCON_L" or "PRO_CONTROLLER"
-
-Options:
-    -d --device_id <bluetooth_adapter_id>   ID of the bluetooth adapter. Integer matching the digit in the hci* notation
-                                            (e.g. hci0, hci1, ...) or Bluetooth mac address of the adapter in string
-                                            notation (e.g. "FF:FF:FF:FF:FF:FF").
-                                            Note: Selection of adapters may not work if the bluez "input" plugin is
-                                            enabled.
-
-    --spi_flash <spi_flash_memory_file>     Memory dump of a real Switch controller. Required for joystick emulation.
-                                            Allows displaying of JoyCon colors.
-                                            Memory dumps can be created using the dump_spi_flash.py script.
-
-    -r --reconnect_bt_addr <console_bluetooth_address>  Previously connected Switch console Bluetooth address in string
-                                                        notation (e.g. "FF:FF:FF:FF:FF:FF") for reconnection.
-                                                        Does not require the "Change Grip/Order" menu to be opened,
-
-    -l --log <communication_log_file>       Write hid communication (input reports and output reports) to a file.
-"""
-
-
+    
 async def test_controller_buttons(controller_state: ControllerState):
     """
     Example controller script.
@@ -57,6 +52,7 @@ async def test_controller_buttons(controller_state: ControllerState):
     """
     if controller_state.get_controller() != Controller.PRO_CONTROLLER:
         raise ValueError('This script only works with the Pro Controller!')
+    
 
     # waits until controller is fully connected
     await controller_state.connect()
@@ -164,6 +160,9 @@ async def mash_button(controller_state, button, interval):
     await user_input
 
 
+    
+    
+    
 async def _main(args):
     # parse the spi flash
     if args.spi_flash:
@@ -189,6 +188,10 @@ async def _main(args):
         # Create command line interface and add some extra commands
         cli = ControllerCLI(controller_state)
 
+        async def _run_buy(): 
+            await buy(controller_state)
+        cli.add_command('buy',_run_buy)
+
         # Wrap the script so we can pass the controller state. The doc string will be printed when calling 'help'
         async def _run_test_controller_buttons():
             """
@@ -198,7 +201,8 @@ async def _main(args):
 
         # add the script from above
         cli.add_command('test_buttons', _run_test_controller_buttons)
-
+       
+        
         # Mash a button command
         async def call_mash_button(*args):
             """
