@@ -9,6 +9,7 @@
 sudo apt install python3-dbus libhidapi-hidraw0
 apt-get install pip3
 apt-get install python3
+pip3 install
 pip3 install 
 ```
 
