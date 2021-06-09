@@ -3,6 +3,16 @@
 现在已经可以实现的功能， 商店自动购物，背包自动放置九件物品。
 更多的功能实现中
 
+## Installation Guide 
+
+```bash
+sudo apt install python3-dbus libhidapi-hidraw0
+apt-get install pip3
+apt-get install python3
+pip3 install 
+```
+
+
 
 # joycontrol
 Emulate Nintendo Switch Controllers over Bluetooth.
@@ -15,6 +25,7 @@ Tested on Ubuntu 19.10 and with Raspberry Pi 4B Raspbian GNU/Linux 10 (buster)
 sudo apt install python3-dbus libhidapi-hidraw0
 ```
 - Clone the repository and install the joycontrol package to get missing dependencies (Note: Controller script needs super user rights, so python packages must be installed as root). In the joycontrol folder run:
+
 ```bash
 sudo pip3 install .
 ```
